@@ -1,7 +1,4 @@
-const FtpSrv = require('ftp-srv');
+#!/usr/bin/env node
+const startFtpServer = require('./server');
 
-const ftpServer = new FtpSrv();
-
-ftpServer.on('login', (data, resolve, reject) => {});
-
-ftpServer.listen().then(() => {});
+await startFtpServer();
