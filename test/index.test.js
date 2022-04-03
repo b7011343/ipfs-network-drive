@@ -1,4 +1,4 @@
-const { describe, expect, test, it } = require('@jest/globals');
+const { describe, expect, it } = require('@jest/globals');
 
 describe('index.js', () => {
   it('test', () => {

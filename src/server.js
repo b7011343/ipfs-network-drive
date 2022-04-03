@@ -1,10 +1,14 @@
 const { FtpSrv, FileSystem } = require('ftp-srv');
+const [username, password] = process.argv.slice(2);
 
-const startFtpServer = async () => {
+const startFtpServer = async (username, password) => {
   const server = new FtpSrv();
   
   server.on('login', (data, resolve, reject) => {
-    // resolve({ root: '../DB/2' });
+    if(data.username === username && data.password === password){
+      return resolve({ root: "/ftp-ipfs" });    
+    }
+    return reject(new errors.GeneralError('Invalid username or password', 401));
   });
   
   server.on('client-error', ({connection, context, error}) => {
@@ -12,19 +16,25 @@ const startFtpServer = async () => {
   });
   
   // File downloaded
-  server.on('RETR', (error, filePath) => {});
+  server.on('RETR', (error, filePath) => {
+    console.log('DOWNLOAD', filePath)
+  });
   
   // File uploaded
-  server.on('STOR', (error, fileName) => {});
+  server.on('STOR', (error, fileName) => {
+    console.log('UPLOAD', fileName)
+  });
   
   // File name changed
-  server.on('RNTO', (error, fileName) => {});
+  server.on('RNTO', (error, fileName) => {
+    console.log('RENAME', fileName)
+  });
   
   const closeFtpServer = async () => { 
     await server.close(); 
   }; 
     
-  await server.listen();
+  server.listen().then(() => console.log('FTP backup server is starting...'));
 
   return { 
     shutdownFunc: async () => { 
@@ -33,7 +43,6 @@ const startFtpServer = async () => {
   };
 };
 
-module.exports = {
-  startFtpServer,
-  default: startFtpServer,
-}
+(async () => {
+  await startFtpServer(username, password);
+})();
