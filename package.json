@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "A CLI tool to allow you to host an IPFS node which can automatically sync your data to the created network drive and IPFS",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "run": "node ./src/index.js",
-    "test": "jest --coverage test/*.test.js"
+    "test": "jest /*.test.js"
   },
   "repository": {
     "type": "git",
