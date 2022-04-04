@@ -31,8 +31,7 @@ const resolverFunction = (ip) => {
 
 const startServer = (_username, _password) => {
   const server = new FtpSrv({
-    // pasv_url: resolverFunction,
-    pasv_url: 'ftp://192.168.0.151',
+    pasv_url: resolverFunction,
     url: 'ftp://0.0.0.0:21',
     log: logger,
     anonymous: false,
