@@ -16,6 +16,8 @@ Object.keys(args).forEach((arg) => {
 
 const ftpBackupServer = new (forever.Monitor)('./src/server.js', {
   silent: false,
+  killTree: true,
+  killSignal: 'SIGINT',
   args: [argv.u, argv.p]
 });
 

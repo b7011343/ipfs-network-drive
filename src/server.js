@@ -1,4 +1,5 @@
 const { FtpSrv, FileSystem } = require('ftp-srv');
+const fs = require('fs');
 const { Netmask } = require('netmask');
 const { networkInterfaces } = require('os');
 const bunyan = require('bunyan');
@@ -29,54 +30,64 @@ const resolverFunction = (ip) => {
   return "127.0.0.1";
 };
 
-const startFtpServer = async (username, password) => {
-  const server = new FtpSrv({
-    pasv_url: resolverFunction,
-    url: 'ftp://127.0.0.1:21',
-    log: logger
-  });
-  
-  server.on('login', (data, resolve, reject) => {
-    if(data.username === username && data.password === password) {
-      console.log('Authentication successful');
-      // return resolve({ root: "./ftp-drive" });
-      return resolve();    
-    }
-    return reject(new errors.GeneralError('Invalid username or password', 401));
-  });
-  
-  server.on('client-error', ({connection, context, error}) => {
-    console.error(`FTP server error: error interfacing with client ${context} ${error}`); 
-  });
-  
-  // File downloaded
-  server.on('RETR', (error, filePath) => {
-    console.log('DOWNLOAD');
-  });
-  
-  // File uploaded
-  server.on('STOR', (error, fileName) => {
-    console.log('UPLOAD');
-  });
-  
-  // File name changed
-  server.on('RNTO', (error, fileName) => {
-    console.log('RENAME');
-  });
-  
-  const closeFtpServer = async () => { 
-    await server.close(); 
-  }; 
-    
-  server.listen().then(() => console.log('FTP backup server is starting...'));
+const server = new FtpSrv({
+  pasv_url: resolverFunction,
+  url: 'ftp://0.0.0.0:21',
+  log: logger,
+  anonymous: false,
+  file_format: 'ep'
+});
 
-  return { 
-    shutdownFunc: async () => { 
-      await closeFtpServer(); 
-    },
-  };
-};
+server.on('login', (data, resolve, reject) => {
+  if(data.username === username && data.password === password) {
+    console.log('Authentication successful');
+    return resolve({ root: './ftp-drive/' });
+  }
+  return reject(new errors.GeneralError('Invalid username or password', 401));
+});
 
-(async () => {
-  await startFtpServer(username, password);
-})();
+server.on('client-error', ({connection, context, error}) => {
+  console.error(`FTP server error: error interfacing with client ${context} ${error}`); 
+});
+
+// File downloaded
+server.on('RETR', (error, filePath) => {
+  console.log('DOWNLOAD');
+});
+
+// File uploaded
+server.on('STOR', (error, fileName) => {
+  console.log('UPLOAD');
+});
+
+// File name changed
+server.on('RNTO', (error, fileName) => {
+  console.log('RENAME');
+});
+
+server.listen().then(() => console.log('FTP server started'));
+
+// const PID = server?.log?.fields?.pid;
+
+// // const exitHandler = async (options, exitCode) => {
+// //   await server.close();
+// //   PID && process.kill(PID) && console.log(`${PID} terminated`);
+// //   if (options.cleanup) console.log('clean');
+// //   if (exitCode || exitCode === 0) console.log(exitCode);
+// //   if (options.exit) process.exit();
+// // };
+
+// const exit = () => {
+//   console.log(PID);
+//   process.kill(PID) && console.log(`${PID} terminated`);
+//   server.close();
+// };
+
+// process.on('exit', () => exit());
+// process.on('SIGINT', () => exit());
+// process.on('uncaughtException', () => exit());
+
+
+// // process.on('exit', exitHandler.bind(null, { cleanup: true }));
+// // process.on('SIGINT', exitHandler.bind(null, { exit: true }));
+// // process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
