@@ -31,11 +31,12 @@ const resolverFunction = (ip) => {
 
 const startServer = (_username, _password) => {
   const server = new FtpSrv({
-    pasv_url: resolverFunction,
-    // url: 'ftp://127.0.0.1:21',
+    // pasv_url: resolverFunction,
+    pasv_url: 'ftp://192.168.0.151',
+    url: 'ftp://0.0.0.0:21',
     log: logger,
     anonymous: false,
-    file_format: 'ep',
+    file_format: 'ls',
   });
 
   server.on('login', ({ connection, username, password }, resolve, reject) => {
@@ -71,6 +72,15 @@ const startServer = (_username, _password) => {
 
       // File deleted
       connection.on('RMD', (error, fileName) => {
+        if (error) {
+          console.error(`FTP server error: could not delete file name ${fileName} - ${error}`);
+          return;
+        }
+        console.log(`FTP server: file successfully deleted - ${fileName}`);
+      });
+
+      // File deleted
+      connection.on('DELE', (error, fileName) => {
         if (error) {
           console.error(`FTP server error: could not delete file name ${fileName} - ${error}`);
           return;
