@@ -3,7 +3,7 @@ const { Netmask } = require('netmask');
 const { networkInterfaces } = require('os');
 const bunyan = require('bunyan');
 const path = require('path');
-const { startIPFSNode } = require('./ipfs');
+const { startIPFSNode, fileAdded } = require('./ipfs');
 
 const nets = networkInterfaces();
 const logger = bunyan.createLogger({ name: 'ftp-ipfs' });
@@ -60,7 +60,8 @@ const startServer = async (_username, _password) => {
           console.error(`FTP server error: could not receive file ${fileName} for upload ${error}`);
           return;
         }
-        console.info(`FTP server: upload successfully received - ${fileName}`); 
+        console.info(`FTP server: upload successfully received - ${fileName}`);
+        fileAdded(fileName);
       });
 
       // File name changed

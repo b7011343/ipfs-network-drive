@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
+    "recover": "node ./src/recover.js",
     "test": "jest --coverage /*.test.js"
   },
   "bin": {
-    "ipfs-network-drive": "./src/index.js"
+    "ipfs-network-drive": "./src/index.js",
+    "ipfs-recover": "./src/recover.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,7 @@
   "homepage": "https://github.com/b7011343/ipfs-network-drive#readme",
   "dependencies": {
     "bunyan": "^1.8.15",
+    "compressing": "^1.5.1",
     "crypto-js": "^4.1.1",
     "ftp-srv": "^4.5.0",
     "ipfs-cluster-api": "0.0.9",
