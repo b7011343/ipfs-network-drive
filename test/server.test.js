@@ -1,6 +1,6 @@
 const { describe, expect, it } = require('@jest/globals');
 
-describe('index.js', () => {
+describe('server.js', () => {
   it('test', () => {
       expect(true);
   });

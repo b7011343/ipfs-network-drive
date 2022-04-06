@@ -3,6 +3,7 @@ const { Netmask } = require('netmask');
 const { networkInterfaces } = require('os');
 const bunyan = require('bunyan');
 const path = require('path');
+const { startIPFSNode } = require('./ipfs');
 
 const nets = networkInterfaces();
 const logger = bunyan.createLogger({ name: 'ftp-ipfs' });
@@ -29,7 +30,9 @@ const resolverFunction = (ip) => {
   return "127.0.0.1";
 };
 
-const startServer = (_username, _password) => {
+const startServer = async (_username, _password) => {
+  await startIPFSNode();
+
   const server = new FtpSrv({
     pasv_url: resolverFunction,
     url: 'ftp://0.0.0.0:21',
