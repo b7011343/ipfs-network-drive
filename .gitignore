@@ -104,8 +104,9 @@ dist
 .tern-port
 
 # IPFS storage
-IPFS
-.jsipfs2/
+ipfs/*
+!ipfs/.gitkeep 
 
 # FTP storage
-ftp-drive
+ftp-drive/*
+!ftp-drive/.gitkeep 
